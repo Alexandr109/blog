@@ -123,7 +123,7 @@ if ($Module == 'register' and $_POST['enter']) {
         $query = "SELECT `login` FROM `users` WHERE `login` = '$_POST[login]'";
         $stmt = $pdo->query($query);
         $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
-        //$Row = mysqli_fetch_assoc(mysqli_query($CONNECT, "SELECT `login` FROM `users` WHERE `login` = '$_POST[login]'"));
+
     }
 
     if ($Row['login']) exit('login <b>'.$_POST['login'].'</b> is alredy used.');
@@ -131,7 +131,7 @@ if ($Module == 'register' and $_POST['enter']) {
         $query = "SELECT `email` FROM `users` WHERE `email` = '$_POST[email]'";
         $stmt = $pdo->query($query);
         $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
-        //$Row = mysqli_fetch_assoc(mysqli_query($CONNECT, "SELECT `email` FROM `users` WHERE `email` = '$_POST[email]'"));
+
     }
     if ($Row['email']) exit('E-Mail <b>'.$_POST['email'].'</b> is alredy used.');
     {
@@ -153,7 +153,7 @@ if ($Module == 'register' and $_POST['enter']) {
         $pdoResult = $pdo->prepare($pdoQuery);
         $pdoExec = $pdoResult->execute(array(":id"=>$ID,":login"=>$login,":password"=>$password,":name"=>$name,":regdate" =>$regdate, ":email"=>$email,":gender"=>$gender, ":avatar"=>$avatar, ":active"=>$avatar, ":group"=>$group));
 
-        //mysqli_query($CONNECT, "INSERT INTO `users`  VALUES ('', '$_POST[login]', '$_POST[password]', '$_POST[name]', NOW(), '$_POST[email]', $_POST[gender], 0, 1, 0)");
+
     }
     $Code = str_replace('=', '', base64_encode($_POST['email']));
     MessageSend(3, 'Registration comlited. ');
@@ -175,14 +175,12 @@ else if ($Module == 'login' and $_POST['enter']) {
         $query ="SELECT `password`, `active` FROM `users` WHERE `login` = '$_POST[login]'";
         $stmt = $pdo->query($query);
         $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
-        //$Row = mysqli_fetch_assoc(mysqli_query($CONNECT, "SELECT `password`, `active` FROM `users` WHERE `login` = '$_POST[login]'"));
-    }
+        }
     if ($Row['password'] != $_POST['password']) MessageSend(1, 'Invalid login.');
     {
         $query = "SELECT `id`, `name`, `regdate`, `email`, `gender`, `avatar`, `password`, `login`, `group` FROM `users` WHERE `login` = '$_POST[login]'";
         $stmt = $pdo->query($query);
         $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
-        //$Row = mysqli_fetch_assoc(mysqli_query($CONNECT, "SELECT `id`, `name`, `regdate`, `email`, `gender`, `avatar`, `password`, `login`, `group` FROM `users` WHERE `login` = '$_POST[login]'"));
     }
     $_SESSION['USER_LOGIN'] = $Row['login'];
     $_SESSION['USER_PASSWORD'] = $Row['password'];
