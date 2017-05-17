@@ -6,7 +6,7 @@ session_start();
 if ($_SESSION['USER_LOGIN_IN'] != 1 and $_COOKIE['user']) {
 
 
-    $dsn = "mysql:host=HOST;dbname=DB;charset=utf8";
+
     $opt = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
