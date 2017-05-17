@@ -6,7 +6,7 @@ UAccess(2);
 $Param['id'] += 0;
 if (!$Param['id']) MessageSend(1, 'Invalid ID', '/news');
 {
-     $stmt = $pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate`, `rateusers` FROM `news` WHERE `id` = ' . $Param['id'] );
+     $stmt = $pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate` FROM `news` WHERE `id` = ' . $Param['id'] );
     $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
 }
 if (!$Row['name']) MessageSend(1, 'News not found', '/news');
