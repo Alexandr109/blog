@@ -15,11 +15,14 @@ Head('LogIn') ?>
                 <br><input type="password" name="password" placeholder="Password" maxlength="15"
                            pattern="[A-Za-z-0-9]{5,15}" title="More then 5 and lower then 15 latin letters or numbers"
                            required>
-                <div class="capdiv"><input type="text" class="capinp" name="captcha" placeholder="Captcha" maxlength="10"
-                                           pattern="[0-9]{1,5}" title="Only numbers." required> <img
-                            src="/resource/captcha.php" class="capimg" alt="Captcha"></div>
+                <div class="capdiv">
+                    <input type="text" class="capinp" name="captcha" placeholder="Captcha" maxlength="10"
+                                           pattern="[0-9]{1,5}" title="Only numbers." required>
+                    <img src="/resource/captcha.php" class="capimg" alt="Captcha">
+                </div>
                 <br><input type="checkbox" name="remember"> Remember me
-                <br><br><input type="submit" name="enter" value="LogIn"> <input type="reset" value="Clear">
+                <br><br><input type="submit" name="enter" value="LogIn">
+                <input type="reset" value="Clear">
             </form>
         </div>
     </div>

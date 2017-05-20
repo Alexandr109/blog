@@ -3,12 +3,27 @@ $pdo = new PDO($dsn, USER, PASS, $opt);
 
 $stmt = $pdo->query( 'SELECT `login`, `regdate`, `group` FROM `users` ORDER BY `regdate` DESC LIMIT 4');
 $Result =  $stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach ($Result as $row => $Row) $INFO1 .= '<div class="ChatBlock"><span>Registration data: ' . $Row['regdate'] . '</span>' . UserGroup($Row['group']) . ': ' . $Row['login'] . '</div>';
+
+foreach ($Result as $row => $Row)
+{
+    $INFO1 .= '<div class="ChatBlock">
+                    <span>Registration data: ' . $Row['regdate'] . '</span>'
+                    . UserGroup($Row['group']) . ': ' . $Row['login'] . '
+               </div>';
+}
 
 
 $stmt = $pdo->query( 'SELECT `id`, `text`, `date` FROM `comments` ORDER BY `date` DESC LIMIT 4');
 $Result =  $stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach ($Result as $row => $Row) $INFO2 .= '<div class="ChatBlock"><span>Data: ' . $Row['date'] . ' | <a href="/admin/query/com_delete/' . $Row['id'] . '" class="lol">Удалить</a></span>' . $Row['text'] . '</div>';
+
+foreach ($Result as $row => $Row)
+{
+    $INFO2 .= '<div class="ChatBlock">
+                    <span>Data: ' . $Row['date'] . ' | 
+                        <a href="/admin/query/com_delete/' . $Row['id'] . '" class="edit">Delete</a>
+                    </span>' . $Row['text'] . '
+               </div>';
+}
 
 
 Head('Admin panel');

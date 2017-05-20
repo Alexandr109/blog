@@ -16,11 +16,14 @@ function COMMENTS()
     $Count = $stmt->fetch(PDO::FETCH_NUM);
 
 
-    if (!$Param['page']) {
+    if (!$Param['page'])
+    {
         $Param['page'] = 1;
         $stmt = $pdo->query('SELECT `id`, `added`, `date`, `text` FROM `comments` WHERE `module` = ' . $ID . ' AND `material` = ' . $Param['id'] . ' ORDER BY `id` DESC LIMIT 0, 5');
         $Result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } else {
+    }
+    else
+    {
         $Start = ($Param['page'] - 1) * 5;
         $stmt = $pdo->query(str_replace('START', $Start, 'SELECT `id`, `added`, `date`, `text` FROM `comments` WHERE `module` = ' . $ID . ' AND `material` = ' . $Param['id'] . ' ORDER BY `id` DESC LIMIT START, 5'));
         $Result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -28,10 +31,22 @@ function COMMENTS()
 
     PageSelector("/$Page/$Module/id/$Param[id]/page/", $Param['page'], $Count);
 
-    foreach ($Result as $row => $Row) {
-        if ($_SESSION['USER_GROUP'] == 2) $Admin = ' | <a href="/comments/control/action/delete/id/' . $Row['id'] . '" class="lol">Delete</a> | <a href="/comments/control/action/edit/id/' . $Row['id'] . '" class="lol">Edit</a>';
-        if ($Row['id'] == $_SESSION['COMMENTS_EDIT']) $Row['text'] = '<form method="POST" action="/comments/control"><textarea class="ChatMessage" name="text" placeholder="Message text" required>' . $Row['text'] . '</textarea><br><input type="submit" name="save" value="Save"> <input type="submit" name="cancel" value="Cancel"> <input type="reset" value="Clear"></form>';
-        echo '<div class="ChatBlock"><span>' . $Row['added'] . ' | ' . $Row['date'] . $Admin . '</span>' . $Row['text'] . '</div>';
+    foreach ($Result as $row => $Row)
+    {
+        if ($_SESSION['USER_GROUP'] == 2)
+            $Admin = ' | <a href="/comments/control/action/delete/id/' . $Row['id'] . '" class="edit">Delete</a>
+                       | <a href="/comments/control/action/edit/id/' . $Row['id'] . '" class="edit">Edit</a>';
+
+        if ($Row['id'] == $_SESSION['COMMENTS_EDIT'])
+            $Row['text'] =
+                '<form method="POST" action="/comments/control">
+                    <textarea class="ChatMessage" name="text" placeholder="Message text" required>' . $Row['text'] . '</textarea>
+                    <br><input type="submit" name="save" value="Save"> <input type="submit" name="cancel" value="Cancel">
+                    <input type="reset" value="Clear">
+                </form>';
+        echo '<div class="ChatBlock">
+                <span>' . $Row['added'] . ' | ' . $Row['date'] . $Admin . '</span>' . $Row['text'] . '
+              </div>';
     }
 
 }

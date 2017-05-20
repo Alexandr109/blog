@@ -15,7 +15,9 @@ Head($Row['name']);
         ?>
         <div class="Page">
             <?php
-            if ($_SESSION['USER_GROUP'] == 2) $EDIT = '| <a href="/news/edit/id/' . $Param['id'] . '" class="lol">Edit news</a> | <a href="/news/control/id/' . $Param['id'] . '/command/delete" class="lol">Delete news</a>' . $Active;
+                if ($_SESSION['USER_GROUP'] == 2)
+                    $EDIT = '| <a href="/news/edit/id/' . $Param['id'] . '" class="edit">Edit news</a>
+                             | <a href="/news/control/id/' . $Param['id'] . '/command/delete" class="edit">Delete news</a>' . $Active;
             echo ' Added: ' . $Row['added'] . ' | Data: ' . $Row['date'] . ' ' . $EDIT . '<br><br><b>' . $Row['name'] . '</b><br>' . $Row['text'];
             COMMENTS()
             ?>

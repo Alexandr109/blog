@@ -5,7 +5,9 @@ if ($_SESSION['USER_GROUP'] != 2) MessageSend(2, 'Add news can only admin.', '/n
 
 if ($_SESSION['USER_GROUP'] == 2) $Active = 1;
 else $Active = 0;
+
 if ($_POST['enter'] and $_POST['text'] and $_POST['name'] and $_POST['cat']) {
+    //xss pretect
     $_POST['name'] = FormChars($_POST['name']);
     $_POST['text'] = FormChars($_POST['text']);
     $_POST['cat'] += 0;

@@ -32,19 +32,24 @@ if ($_SESSION['USER_LOGIN_IN'] != 1 and $_COOKIE['user']) {
 }
 
 
-if ($_SERVER['REQUEST_URI'] == '/') {
+if ($_SERVER['REQUEST_URI'] == '/')
+{
     $Page = 'index';
     $Module = 'index';
-} else {
+}
+else
+{
     $URL_Path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $URL_Parts = explode('/', trim($URL_Path, ' /'));
     $Page = array_shift($URL_Parts);
     $Module = array_shift($URL_Parts);
 
 
-    if (!empty($Module)) {
+    if (!empty($Module))
+    {
         $Param = array();
-        for ($i = 0; $i < count($URL_Parts); $i++) {
+        for ($i = 0; $i < count($URL_Parts); $i++)
+        {
             $Param[$URL_Parts[$i]] = $URL_Parts[++$i];
         }
     }
@@ -52,30 +57,40 @@ if ($_SERVER['REQUEST_URI'] == '/') {
 
 
 if ($Page == 'index') include('page/index.php');
-else if ($Page == 'login') include('page/login.php');
-else if ($Page == 'register') include('page/register.php');
-else if ($Page == 'account') include('form/account.php');
-else if ($Page == 'profile') include('page/profile.php');
-else if ($Page == 'restore') include('page/restore.php');
-else if ($Page == 'chat') include('page/chat.php');
+    else if ($Page == 'login') include('page/login.php');
+    else if ($Page == 'register') include('page/register.php');
+    else if ($Page == 'account') include('form/account.php');
+    else if ($Page == 'profile') include('page/profile.php');
 
-else if ($Page == 'news') {
-    if (!$Module or $Page == 'news' and $Module == 'category' or $Page == 'news' and $Module == 'main') include('module/news/main.php');
-    else if ($Module == 'material') {
+
+else if ($Page == 'news')
+{
+    if (!$Module or $Page == 'news' and $Module == 'category' or $Page == 'news' and $Module == 'main')
+        include('module/news/main.php');
+    else if ($Module == 'material')
+    {
         include('module/comments/main.php');
         include('module/news/material.php');
-    } else if ($Module == 'add') include('module/news/add.php');
+    }
+    else if ($Module == 'add') include('module/news/add.php');
     else if ($Module == 'edit') include('module/news/edit.php');
     else if ($Module == 'control') include('module/news/control.php');
-} else if ($Page == 'comments') {
+}
+else if ($Page == 'comments')
+{
     if ($Module == 'add') include('module/comments/add.php');
     else if ($Module == 'control') include('module/comments/control.php');
-} else if ($Page == 'admin') {
-    if ($_SESSION['ADMIN_LOGIN_IN']) {
+}
+else if ($Page == 'admin')
+{
+    if ($_SESSION['ADMIN_LOGIN_IN'])
+    {
         if (!$Module) include('module/admin/main.php');
         else if ($Module == 'stats') include('module/admin/stats.php');
         else if ($Module == 'query') include('module/admin/query.php');
-    } else {
+    }
+    else
+        {
         if ($Module == ADMIN_PASS) {
             $_SESSION['ADMIN_LOGIN_IN'] = 1;
             MessageSend(3, 'Entering to admin panel complited.', '/admin');
@@ -86,8 +101,10 @@ else if ($Page == 'news') {
 
 function ULogin($p1)
 {
-    if ($p1 <= 0 and $_SESSION['USER_LOGIN_IN'] != $p1) MessageSend(1, 'This page only for guests.', '/');
-    else if ($_SESSION['USER_LOGIN_IN'] != $p1) MessageSend(1, 'This page only for users.', '/');
+    if ($p1 <= 0 and $_SESSION['USER_LOGIN_IN'] != $p1)
+        MessageSend(1, 'This page only for guests.', '/');
+    else if ($_SESSION['USER_LOGIN_IN'] != $p1)
+        MessageSend(1, 'This page only for users.', '/');
 }
 
 
@@ -148,10 +165,10 @@ function HideEmail($p1)
     return $Explode[0] . '@*****';
 }
 
-
+//function for xss protect
 function FormChars($p1)
 {
-    return nl2br(htmlspecialchars(trim($p1), ENT_QUOTES), false);
+    return nl2br(htmlspecialchars(trim($p1), ENT_QUOTES), "UTF-8");
 }
 
 
@@ -178,10 +195,13 @@ function ModuleID($p1)
 function PageSelector($p1, $p2, $p3, $p4 = 5)
 {
     $Page = ceil($p3[0] / $p4);
-    if ($Page > 1) {
+    if ($Page > 1)
+    {
         echo '<div class="PageSelector">';
-        for ($i = ($p2 - 3); $i < ($Page + 1); $i++) {
-            if ($i > 0 and $i <= ($p2 + 3)) {
+        for ($i = ($p2 - 3); $i < ($Page + 1); $i++)
+        {
+            if ($i > 0 and $i <= ($p2 + 3))
+            {
                 if ($p2 == $i) $Swch = 'SwchItemCur';
                 else $Swch = 'SwchItem';
                 echo '<a class="' . $Swch . '" href="' . $p1 . $i . '">' . $i . '</a>';
@@ -213,7 +233,14 @@ function MiniIMG($p1, $p2, $p3, $p4, $p5 = 50)
 
 function AdminMenu()
 {
-    echo '<div class="MenuHead"><a href="/admin"><div class="Menu">Main</div></a><a href="/admin/query/logout/1"><div class="Menu">Exit</div></a></div>';
+    echo '<div class="MenuHead">
+                <a href="/admin"><div class="Menu">Main</div></a>
+                <a href="/admin/query/logout/1">
+                    <div class="Menu">
+                        Exit
+                    </div>
+                </a>                
+          </div>';
 }
 
 
@@ -222,10 +249,21 @@ function Menu()
     if ($_SESSION['USER_LOGIN_IN'] != 1)
         $Menu =
             '<a href="/register"><div class="Menu">Registration</div></a>
-            <a href="/login"><div class="Menu">LogIn</div></a>';
-    else $Menu = '<a href="/profile"><div class="Menu">Profile</div></a> ';
+             <a href="/login"><div class="Menu">LogIn</div></a>';
+    else $Menu =
+        '<a href="/profile">
+            <div class="Menu">
+                Profile
+            </div>
+        </a> ';
 
-    echo '<div class="MenuHead"><a href="/news"><div class="Menu">News</div></a>' . $Menu . '</div>';
+    echo '<div class="MenuHead">
+                <a href="/news">
+                    <div class="Menu">
+                        News
+                    </div>
+                </a>' . $Menu . '
+          </div>';
 }
 
 function Footer()

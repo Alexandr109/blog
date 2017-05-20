@@ -6,12 +6,15 @@ UAccess(2);
 $Param['id'] += 0;
 if (!$Param['id']) MessageSend(1, 'Invalid ID', '/news');
 {
-     $stmt = $pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate` FROM `news` WHERE `id` = ' . $Param['id'] );
+    $stmt = $pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate` FROM `news` WHERE `id` = ' . $Param['id'] );
     $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
 if (!$Row['name']) MessageSend(1, 'News not found', '/news');
 
-if ($_POST['enter'] and $_POST['text'] and $_POST['name'] and $_POST['cat']) {
+if ($_POST['enter'] and $_POST['text'] and $_POST['name'] and $_POST['cat'])
+{
+    //xss protect
     $_POST['name'] = FormChars($_POST['name']);
     $_POST['text'] = FormChars($_POST['text']);
     $_POST['cat'] += 0;
@@ -35,6 +38,8 @@ if ($_POST['enter'] and $_POST['text'] and $_POST['name'] and $_POST['cat']) {
 }
 
 Head('Edit news') ?>
+
+
 <body>
 <div class="wrapper">
     <div class="header"></div>
@@ -44,12 +49,18 @@ Head('Edit news') ?>
         ?>
         <div class="Page">
             <?php
-            echo '<form method="POST" action="/news/edit/id/' . $Param['id'] . '">
-            <input type="text" name="name" placeholder="News title" value="' . $Row['name'] . '" required>
-            <br><select size="1" name="cat">' . str_replace('value="' . $Row['cat'], 'selected value="' . $Row['cat'], '<option value="1">Category 1</option><option value="2">Category 2</option><option value="3">Category 3</option>') . '</select>
-            <br><textarea class="Add" name="text" required>' . str_replace('<br>', '', $Row['text']) . '</textarea>
-            <br><input type="submit" name="enter" value="Save"> <input type="reset" value="Clear">
-            </form>'
+            echo '
+                <form method="POST" action="/news/edit/id/' . $Param['id'] . '">
+                    <input type="text" name="name" placeholder="News title" value="' . $Row['name'] . '" required><br>
+                        <select size="1" name="cat">' .
+                            str_replace('value="' . $Row['cat'], 'selected value="' . $Row['cat'], '
+                            <option value="1">Category 1</option>
+                            <option value="2">Category 2</option>
+                            <option value="3">Category 3</option>') .
+                        '</select><br>                       
+                    <textarea class="Add" name="text" required>' . str_replace('<br>', '', $Row['text']) . '</textarea><br>
+                    <input type="submit" name="enter" value="Save"> <input type="reset" value="Clear">
+                </form>'
             ?>
         </div>
     </div>
