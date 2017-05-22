@@ -1,7 +1,7 @@
 <?php
 global $Opt;
 
-$pdo = new PDO($Dsn, USER, PASS, $Opt);
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
 
 if ($_SESSION['USER_GROUP'] != 2) MessageSend(2, 'Add news can only admin.', '/news');
 
@@ -25,9 +25,9 @@ if (isset($_POST['enter']) and isset($_POST['text']) and isset($_POST['name']) a
 
 
 
-    $pdoQuery = "INSERT INTO news (`id`,`name`,`cat`,`added`,`text`, `date`,`active`,`rate`) VALUES (:id,:name,:cat,:added,:text, :date,:active,:rate)";
-    $pdoResult = $pdo->prepare($pdoQuery);
-    $pdoExec = $pdoResult->execute(array(":id"=>$Id,":name"=>$Name,":cat"=>$Cat,":added"=>$Added,":text"=>$Text, ":date"=>$Date,"active"=>$active,"rate"=>$Rate));
+    $PdoQuery = "INSERT INTO news (`id`,`name`,`cat`,`added`,`text`, `date`,`active`,`rate`) VALUES (:id,:name,:cat,:added,:text, :date,:active,:rate)";
+    $PdoResult = $Pdo->prepare($PdoQuery);
+    $PdoExec = $PdoResult->execute(array(":id"=>$Id,":name"=>$Name,":cat"=>$Cat,":added"=>$Added,":text"=>$Text, ":date"=>$Date,"active"=>$active,"rate"=>$Rate));
 
     MessageSend(2, 'News added', '/news');
 }
