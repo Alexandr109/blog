@@ -1,7 +1,11 @@
 <?php
-$pdo = new PDO($dsn, USER, PASS, $opt);
-if ($Module == 'logout' and $_SESSION['USER_LOGIN_IN'] == 1) {
-    if ($_COOKIE['user']) {
+global $Opt;
+
+global $Message, $Num;
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
+
+if (isset($_SESSION['USER_LOGIN_IN'])and $Module == 'logout' and $_SESSION['USER_LOGIN_IN'] == 1) {
+    if (isset($_COOKIE['user'])) {
         setcookie('user', '', strtotime('-30 days'), '/', null, null, true);
         unset($_COOKIE['user']);
     }
@@ -15,33 +19,17 @@ if ($Module == 'edit' and $_POST['enter'])
         ULogin(1);
         //xss pretect
         $_POST['name'] = FormChars($_POST['name']);
-        $_POST['gender'] = FormChars($_POST['gender']);
-
 
         if ($_POST['name'] != $_SESSION['USER_NAME'])
         {
-            $query = "UPDATE `users`  SET `name` = '$_POST[name]' WHERE `id` = $_SESSION[USER_ID]";
-            $name = $_POST['name'];
-            $id = $_SESSION['USER_ID'];
-            $upd = $pdo->prepare($query);
-            $upd ->bindValue(":name",$name);
-            $upd ->bindValue(":id",$id);
-            $upd ->execute();
+            $Query = "UPDATE `users`  SET `name` = '$_POST[name]' WHERE `id` = $_SESSION[USER_ID]";
+            $Name = $_POST['name'];
+            $Id = $_SESSION['USER_ID'];
+            $Upd = $Pdo->prepare($Query);
+            $Upd ->bindValue(":name",$Name);
+            $Upd ->bindValue(":id",$Id);
+            $Upd ->execute();
             $_SESSION['USER_NAME'] = $_POST['name'];
-        }
-
-
-        if (UserGender($_POST['gender']) != $_SESSION['USER_GENDER']) {
-            $query = "UPDATE `users`  SET `gender` = :gender] WHERE `id` = :ID";
-            $gender = $_POST['gender'];
-            $ID = $_SESSION[USER_ID];
-            $upd = $pdo->prepare($query);
-            $upd ->bindValue(":gender",$gender);
-            $upd ->bindValue(":ID",$ID);
-            $upd ->execute();
-
-
-            $_SESSION['USER_GENDER'] = UserGender($_POST['gender']);
         }
 
 
@@ -65,27 +53,22 @@ if ($Module == 'edit' and $_POST['enter'])
                         $Download = $Dir.'/'.$_SESSION['USER_ID'];
                         $_SESSION['USER_AVATAR'] = $Num;
 
-                        $query = "UPDATE `users`  SET `avatar` = :avatar WHERE `id` = :ID";
-                        $avatar =$Num;
-                        $ID = $_SESSION[USER_ID];
-                        $upd = $pdo->prepare($query);
-                        $upd ->bindValue(":avatar",$avatar);
-                        $upd ->bindValue(":ID",$ID);
-                        $upd ->execute();
+                        $Query = "UPDATE `users`  SET `avatar` = :avatar WHERE `id` = :ID";
+                        $Avatar =$Num;
+                        $ID = $_SESSION['USER_ID'];
+                        $Upd = $Pdo->prepare($Query);
+                        $Upd ->bindValue(":avatar",$Avatar);
+                        $Upd ->bindValue(":ID",$ID);
+                        $Upd ->execute();
                         break;
                     }
                 }
             }
-
             else $Download = 'resource/avatar/'.$_SESSION['USER_AVATAR'].'/'.$_SESSION['USER_ID'];
             imagejpeg($Tmp, $Download.'.jpg');
             imagedestroy($Image);
             imagedestroy($Tmp);
         }
-
-
-
-
         MessageSend(3, 'Data chenged.');
 }
 
@@ -101,41 +84,41 @@ if ($Module == 'register' and $_POST['enter'])
     $_POST['gender'] = FormChars($_POST['gender']);
     $_POST['captcha'] = FormChars($_POST['captcha']);
 
-    if (!$_POST['login'] or !$_POST['email'] or !$_POST['password'] or !$_POST['name'] or $_POST['gender'] > 4 or !$_POST['captcha']) MessageSend(1, 'Error.');
+    if (!$_POST['login'] or !$_POST['email'] or !$_POST['password'] or !$_POST['name'] or $_POST['gender'] > 4 or !$_POST['captcha'])
+        MessageSend(1, 'Error.');
 
     if ($_SESSION['captcha'] != md5($_POST['captcha'])) MessageSend(1, 'Invalid Captcha.');
     {
-        $query = "SELECT `login` FROM `users` WHERE `login` = '$_POST[login]'";
-        $stmt = $pdo->query($query);
-        $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
+        $Query = "SELECT `login` FROM `users` WHERE `login` = '$_POST[login]'";
+        $Stmt = $Pdo->query($Query);
+        $Row =  $Stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     if ($Row['login']) exit('login <b>'.$_POST['login'].'</b> is alredy used.');
     {
-        $query = "SELECT `email` FROM `users` WHERE `email` = '$_POST[email]'";
-        $stmt = $pdo->query($query);
-        $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $Query = "SELECT `email` FROM `users` WHERE `email` = '$_POST[email]'";
+        $Stmt = $Pdo->query($Query);
+        $Row =  $Stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     if ($Row['email']) exit('E-Mail <b>'.$_POST['email'].'</b> is alredy used.');
     {
-
         $ID ='';
-        $login= $_POST['login'];
-        $password= $_POST['password'];
-        $name = $_POST['name'];
-        $regdate = date("Y-m-d H:i:s");
-        $email = $_POST['email'];
-        $gender = $_POST['gender'];
-        $avatar = 0;
-        $active = 1;
-        $group = 0;
+        $Login= $_POST['login'];
+        $Password= $_POST['password'];
+        $Name = $_POST['name'];
+        $Regdate = date("Y-m-d H:i:s");
+        $Email = $_POST['email'];
+        $Gender = $_POST['gender'];
+        $Avatar = 0;
+        $Active = 1;
+        $Group = 0;
 
         $pdoQuery = "INSERT INTO users (`id`,`login`,`password`,`name`,`regdate`, `email`,`gender`, `avatar`, `active`, `group`) 
                      VALUES (:id,:login,:password,:name,:regdate, :email,:gender, :avatar, :active, :group)";
-        $pdoResult = $pdo->prepare($pdoQuery);
-        $pdoExec = $pdoResult->execute(array(":id"=>$ID,":login"=>$login,":password"=>$password,":name"=>$name,":regdate" =>$regdate, ":email"=>$email,":gender"=>$gender, ":avatar"=>$avatar, ":active"=>$avatar, ":group"=>$group));
+        $pdoResult = $Pdo->prepare($pdoQuery);
+        $pdoExec = $pdoResult->execute(array(":id"=>$ID,":login"=>$Login,":password"=>$Password,":name"=>$Name,":regdate" =>$Regdate, ":email"=>$Email,":gender"=>$Gender, ":avatar"=>$Avatar, ":active"=>$Avatar, ":group"=>$Group));
     }
 
     $Code = str_replace('=', '', base64_encode($_POST['email']));
@@ -158,16 +141,16 @@ else if ($Module == 'login' and $_POST['enter'])
     if (!$_POST['login'] or !$_POST['password'] or !$_POST['captcha']) MessageSend(1, 'Error.');
     if ($_SESSION['captcha'] != md5($_POST['captcha'])) MessageSend(1, 'Invalid Captcha.');
     {
-        $query ="SELECT `password`, `active` FROM `users` WHERE `login` = '$_POST[login]'";
-        $stmt = $pdo->query($query);
-        $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
+        $Query ="SELECT `password`, `active` FROM `users` WHERE `login` = '$_POST[login]'";
+        $Stmt = $Pdo->query($Query);
+        $Row =  $Stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     if ($Row['password'] != $_POST['password']) MessageSend(1, 'Invalid login.');
     {
-        $query = "SELECT `id`, `name`, `regdate`, `email`, `gender`, `avatar`, `password`, `login`, `group` FROM `users` WHERE `login` = '$_POST[login]'";
-        $stmt = $pdo->query($query);
-        $Row =  $stmt->fetch(PDO::FETCH_ASSOC);
+        $Query = "SELECT `id`, `name`, `regdate`, `email`, `gender`, `avatar`, `password`, `login`, `group` FROM `users` WHERE `login` = '$_POST[login]'";
+        $Stmt = $Pdo->query($Query);
+        $Row =  $Stmt->fetch(PDO::FETCH_ASSOC);
     }
     $_SESSION['USER_LOGIN'] = $Row['login'];
     $_SESSION['USER_PASSWORD'] = $Row['password'];
@@ -180,7 +163,7 @@ else if ($Module == 'login' and $_POST['enter'])
     $_SESSION['USER_GROUP'] = $Row['group'];
     $_SESSION['USER_LOGIN_IN'] = 1;
 
-    if ($_REQUEST['remember']) setcookie('user', $_POST['password'], strtotime('+30 days'), '/', null,null, true);
+    if (isset($_REQUEST['remember']) and  $_REQUEST['remember']) setcookie('user', $_POST['password'], strtotime('+30 days'), '/');
     exit(header('Location: /profile'));
 }
 ?>

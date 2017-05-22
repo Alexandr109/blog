@@ -1,31 +1,33 @@
 <?php
-$pdo = new PDO($dsn, USER, PASS, $opt);
+global $Opt;
+
+$pdo = new PDO($Dsn, USER, PASS, $Opt);
 
 if ($_SESSION['USER_GROUP'] != 2) MessageSend(2, 'Add news can only admin.', '/news');
 
 if ($_SESSION['USER_GROUP'] == 2) $Active = 1;
 else $Active = 0;
 
-if ($_POST['enter'] and $_POST['text'] and $_POST['name'] and $_POST['cat']) {
+if (isset($_POST['enter']) and isset($_POST['text']) and isset($_POST['name']) and isset($_POST['cat'])) {
     //xss pretect
     $_POST['name'] = FormChars($_POST['name']);
     $_POST['text'] = FormChars($_POST['text']);
     $_POST['cat'] += 0;
 
-    $id='';
-    $name=$_POST['name'];
-    $cat = $_POST['cat'];
-    $added =$_SESSION['USER_LOGIN'];
-    $text = $_POST['text'];
-    $date = date("Y-m-d H:i:s");
+    $Id='';
+    $Name=$_POST['name'];
+    $Cat = $_POST['cat'];
+    $Added =$_SESSION['USER_LOGIN'];
+    $Text = $_POST['text'];
+    $Date = date("Y-m-d H:i:s");
     $active = 1;
-    $rate = '';
+    $Rate = '';
 
 
 
     $pdoQuery = "INSERT INTO news (`id`,`name`,`cat`,`added`,`text`, `date`,`active`,`rate`) VALUES (:id,:name,:cat,:added,:text, :date,:active,:rate)";
     $pdoResult = $pdo->prepare($pdoQuery);
-    $pdoExec = $pdoResult->execute(array(":id"=>$id,":name"=>$name,":cat"=>$cat,":added"=>$added,":text"=>$text, ":date"=>$date,"active"=>$active,"rate"=>$rate));
+    $pdoExec = $pdoResult->execute(array(":id"=>$Id,":name"=>$Name,":cat"=>$Cat,":added"=>$Added,":text"=>$Text, ":date"=>$Date,"active"=>$active,"rate"=>$Rate));
 
     MessageSend(2, 'News added', '/news');
 }

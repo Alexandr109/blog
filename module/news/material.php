@@ -1,8 +1,10 @@
 <?php
+global $Opt, $EDIT, $Active;
+
 $Param['id'] += 0;
-$pdo = new PDO($dsn, USER, PASS, $opt);
-$stmt = $pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate` FROM `news` WHERE `id` = ' . $Param['id'] );
-$Row =  $stmt->fetch(PDO::FETCH_ASSOC);
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
+$Stmt = $Pdo->query( 'SELECT `name`, `added`, `date`, `text`, `active`, `rate` FROM `news` WHERE `id` = ' . $Param['id'] );
+$Row =  $Stmt->fetch(PDO::FETCH_ASSOC);
 
 Head($Row['name']);
 ?>
@@ -15,11 +17,13 @@ Head($Row['name']);
         ?>
         <div class="Page">
             <?php
-                if ($_SESSION['USER_GROUP'] == 2)
+                if (isset($_SESSION['USER_GROUP']) and $_SESSION['USER_GROUP'] == 2)
                     $EDIT = '| <a href="/news/edit/id/' . $Param['id'] . '" class="edit">Edit news</a>
                              | <a href="/news/control/id/' . $Param['id'] . '/command/delete" class="edit">Delete news</a>' . $Active;
-            echo ' Added: ' . $Row['added'] . ' | Data: ' . $Row['date'] . ' ' . $EDIT . '<br><br><b>' . $Row['name'] . '</b><br>' . $Row['text'];
-            COMMENTS()
+
+                echo ' Added: ' . $Row['added'] . ' | Data: ' . $Row['date'] . ' ' . $EDIT . '<br><br><b>' . $Row['name'] . '</b><br>' . $Row['text'];
+
+                COMMENTS()
             ?>
         </div>
     </div>

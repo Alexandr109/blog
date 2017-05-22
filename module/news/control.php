@@ -1,17 +1,19 @@
 <?php
 UAccess(2);
-$pdo = new PDO($dsn, USER, PASS, $opt);
+global $Opt;
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
 
 
 if ($Param['id'] and $Param['command'])
 {
 
     if ($Param['command'] == 'delete')
-    {
-        $query = "DELETE FROM `news` WHERE `id` = $Param[id]";
-        $query1 = "DELETE FROM `comments` WHERE `material` = $Param[id] AND `module` = 1";
-        $pdo->exec($query);
-        $pdo->exec($query1);
+    {   //delete news
+        $Query = "DELETE FROM `news` WHERE `id` = $Param[id]";
+        //delete comments
+        $Query1 = "DELETE FROM `comments` WHERE `material` = $Param[id] AND `module` = 1";
+        $Pdo->exec($Query);
+        $Pdo->exec($Query1);
         MessageSend(3, 'News is deleted.', '/news');
     }
 

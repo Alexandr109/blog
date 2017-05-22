@@ -1,22 +1,23 @@
 <?php
-$pdo = new PDO($dsn, USER, PASS, $opt);
+global $Opt;
 
-if ($Param['com_delete'])
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
+
+if (isset($Param['com_delete']))
 {
-    $query = "DELETE FROM `comments` WHERE `id` = $Param[com_delete]";
-    $pdo->exec($query);
+    $Query = "DELETE FROM `comments` WHERE `id` = $Param[com_delete]";
+    $Pdo->exec($Query);
     MessageSend(3, 'Comment deleted.');
-
 }
-else if ($_POST['change_group'])
+else if (isset($_POST['change_group']))
 {
-    $query = "UPDATE `users` SET `group` = :group WHERE `login` = :login";
-    $group = $_POST['group'];
-    $login = $_POST['login'];
-    $upd = $pdo->prepare($query);
-    $upd ->bindValue(":group",$group);
-    $upd ->bindValue(":login",$login);
-    $upd ->execute();
+    $Query = "UPDATE `users` SET `group` = :group WHERE `login` = :login";
+    $Group = $_POST['group'];
+    $Login = $_POST['login'];
+    $Upd = $Pdo->prepare($Query);
+    $Upd ->bindValue(":group",$Group);
+    $Upd ->bindValue(":login",$Login);
+    $Upd ->execute();
     MessageSend(3, 'User group <b>' . $_POST['login'] . '</b> сhange.');
 }
 else if ($Param['logout'])

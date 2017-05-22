@@ -8,7 +8,6 @@
         ?>
         <div class="Page">
             <?php
-
             //Main site
             echo 'Please go in news';
             ?>

@@ -1,29 +1,30 @@
 <?php
 Uaccess(2);
-$pdo = new PDO($dsn, USER, PASS, $opt);
+global $Opt;
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
 
-    if ($Param['action'] == 'delete')
+    if (isset($Param['action']) and $Param['action'] == 'delete')
     {
-       $query = "DELETE FROM `comments` WHERE `id` = $Param[id]";
-        $pdo->exec($query);
+        $PdoQuery = "DELETE FROM `comments` WHERE `id` = $Param[id]";
+        $PdoExec = $Pdo->exec($PdoQuery);
         MessageSend(3, 'comment deleted.');
     }
 
-    else if ($Param['action'] == 'edit')
+    else if (isset($Param['action']) and $Param['action'] == 'edit')
     {
         $_SESSION['COMMENTS_EDIT'] = $Param['id'];
         exit(header('location: ' . $_SERVER['HTTP_REFERER']));
     }
 
-    else if ($_POST['save'])
+    else if (isset($_POST['save']))
     {
-        $query  = "UPDATE `comments` SET `text` = :text WHERE `id` = :ID";
-        $text = $_POST['text'];
-        $ID = $_SESSION['COMMENTS_EDIT'];
-        $upd = $pdo->prepare($query);
-        $upd ->bindValue(":text",$text);
-        $upd ->bindValue(":ID",$ID);
-        $upd ->execute();
+        $PdoQuery  = "UPDATE `comments` SET `text` = :text WHERE `id` = :ID";
+        $Text = $_POST['text'];
+        $Id = $_SESSION['COMMENTS_EDIT'];
+        $Upd = $Pdo->prepare($PdoQuery);
+        $Upd ->bindValue(":text",$Text);
+        $Upd ->bindValue(":ID",$Id);
+        $Upd ->execute();
 
         unset($_SESSION['COMMENTS_EDIT']);
         MessageSend(3, 'Comment edited.');

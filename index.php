@@ -1,22 +1,29 @@
 <?php
+
+global $_SESSION;
+
 include_once 'setting.php';
-session_start();
+if (session_status !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+//error_reporting(E_ALL);
+//ini_set("display_errors", 1);
+
+if ((isset($_SESSION['USER_LOGIN_IN'])) and $_SESSION['USER_LOGIN_IN'] != 1 and isset($_COOKIE['user'])) {
 
 
-if ($_SESSION['USER_LOGIN_IN'] != 1 and $_COOKIE['user']) {
 
-
-
-    $opt = array(
+    $Opt = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     );
-    $pdo = new PDO($dsn, USER, PASS, $opt);
+    $Pdo = new PDO($Dsn, USER, PASS, $Opt);
 
-    $stmt = $pdo->query("SELECT `id`, `name`, `regdate`, `email`, `GENDER`, `avatar`, `login`, `group` FROM `users` WHERE `password` = '$_COOKIE[user]'");
+    $Stmt = $Pdo->query("SELECT `id`, `name`, `regdate`, `email`, `GENDER`, `avatar`, `login`, `group` FROM `users` WHERE `password` = '$_COOKIE[user]'");
 
 
-    foreach ($stmt as $Row) {
+    foreach ($Stmt as $Row) {
 
         $_SESSION['USER_ID'] = $Row['id'];
         $_SESSION['USER_LOGIN'] = $Row['login'];
@@ -83,7 +90,7 @@ else if ($Page == 'comments')
 }
 else if ($Page == 'admin')
 {
-    if ($_SESSION['ADMIN_LOGIN_IN'])
+    if (isset($_SESSION['ADMIN_LOGIN_IN']))
     {
         if (!$Module) include('module/admin/main.php');
         else if ($Module == 'stats') include('module/admin/stats.php');
@@ -101,110 +108,125 @@ else if ($Page == 'admin')
 
 function ULogin($p1)
 {
-    if ($p1 <= 0 and $_SESSION['USER_LOGIN_IN'] != $p1)
+    if (isset($_SESSION['USER_LOGIN_IN'])and $p1 <= 0 and $_SESSION['USER_LOGIN_IN'] != $p1)
         MessageSend(1, 'This page only for guests.', '/');
-    else if ($_SESSION['USER_LOGIN_IN'] != $p1)
+    else if (isset($_SESSION['USER_LOGIN_IN']) and $_SESSION['USER_LOGIN_IN'] != $p1)
         MessageSend(1, 'This page only for users.', '/');
 }
 
 
-function MessageSend($p1, $p2, $p3 = '')
+function MessageSend($P1, $P2, $P3 = '')
 {
-    if ($p1 == 1) $p1 = 'Error';
-    else if ($p1 == 2) $p1 = 'Help';
-    else if ($p1 == 3) $p1 = 'Information';
-    $_SESSION['message'] = '<div class="MessageBlock"><b>' . $p1 . '</b>: ' . $p2 . '</div>';
-    if ($p3) $_SERVER['HTTP_REFERER'] = $p3;
+    if ($P1 == 1) $P1 = 'Error';
+    else if ($P1 == 2) $P1 = 'Help';
+    else if ($P1 == 3) $P1 = 'Information';
+    $_SESSION['message'] = '<div class="MessageBlock"><b>' . $P1 . '</b>: ' . $P2 . '</div>';
+    if ($P3) $_SERVER['HTTP_REFERER'] = $P3;
     exit(header('Location: ' . $_SERVER['HTTP_REFERER']));
 }
 
 
 function MessageShow()
+{   if(isset($_SESSION['message']))
 {
-    if ($_SESSION['message']) $Message = $_SESSION['message'];
-    echo $Message;
-    $_SESSION['message'] = array();
+    if (($_SESSION['message'])) {
+
+        $Message = $_SESSION['message'];
+
+        echo $Message;
+
+        $_SESSION['message'] = array();
+    }
+}}
+
+
+function UserGender($P1)
+{
+    if ($P1 == 0) return 'undefined';
+    else if ($P1 == 1) return 'male';
+    else if ($P1 == 2) return 'female';
 }
 
 
-function UserGender($p1)
+function UserGroup($P1)
 {
-    if ($p1 == 0) return 'undefined';
-    else if ($p1 == 1) return 'male';
-    else if ($p1 == 2) return 'female';
+    if ($P1 == 0) return 'User';
+    else if ($P1 == 1) return 'Moderator';
+    else if ($P1 == 2) return 'Admin';
+    else if ($P1 == -1) return 'Banned';
 }
 
 
-function UserGroup($p1)
+function UAccess($P1)
 {
-    if ($p1 == 0) return 'User';
-    else if ($p1 == 1) return 'Moderator';
-    else if ($p1 == 2) return 'Admin';
-    else if ($p1 == -1) return 'Banned';
+    if ($_SESSION['USER_GROUP'] < $P1) MessageSend(1, 'U dont have rule.', '/');
 }
 
 
-function UAccess($p1)
-{
-    if ($_SESSION['USER_GROUP'] < $p1) MessageSend(1, 'U dont have rule.', '/');
-}
-
-
-function RandomString($p1)
+function RandomString($P1)
 {
     $String = "";
     $Char = '0123456789abcdefghijklmnopqrstuvwxyz';
-    for ($i = 0; $i < $p1; $i++)
+    for ($i = 0; $i < $P1; $i++)
         $String .= $Char[rand(0, strlen($Char) - 1)];
     return $String;
 }
 
-function HideEmail($p1)
+function HideEmail($P1)
 {
-    $Explode = explode('@', $p1);
+    $Explode = explode('@', $P1);
     return $Explode[0] . '@*****';
 }
 
 //function for xss protect
-function FormChars($p1)
+function FormChars($P1)
 {
-    return nl2br(htmlspecialchars(trim($p1), ENT_QUOTES), "UTF-8");
+    return nl2br(htmlspecialchars(trim($P1), ENT_QUOTES), "UTF-8");
 }
 
 
-function GenPass($p1, $p2)
+function GenPass($P1, $P2)
 {
-    return md5('GENPASS' . md5('321' . $p1 . '123') . md5('678' . $p2 . '890'));
+    return md5('GENPASS' . md5('321' . $P1 . '123') . md5('678' . $P2 . '890'));
 }
 
-function Head($p1)
+function Head($P1)
 {
-    echo '<!DOCTYPE html><html><head><meta charset="utf-8" /><title>' . $p1 . '</title><meta name="keywords" content="" /><meta name="description" content="" /><link href="/resource/style.css" rel="stylesheet"><link rel="icon" href="/resource/img/favicon.ico" type="image/x-icon"></head>';
+    echo '    <!DOCTYPE html>
+              <html>
+              <head>
+                    <meta charset="utf-8" />
+                    <title>' . $P1 . '</title>
+                    <meta name="keywords" content="" />
+                    <meta name="description" content="" />
+                    <link href="/resource/style.css" rel="stylesheet">
+                    <link rel="icon" href="/resource/img/favicon.ico" type="image/x-icon">
+               </head>';
 }
 
-function ModuleID($p1)
+function ModuleID($P1)
 {
-    if ($p1 == 'news') return 1;
-    else if ($p1 == 'loads') return 2;
+    if ($P1 == 'news') return 1;
+    else if ($P1 == 'loads') return 2;
     else MessageSend(1, 'Module not found.', '/');
 }
 
 
 //number page
 
-function PageSelector($p1, $p2, $p3, $p4 = 5)
+function PageSelector($P1, $P2, $P3, $P4 = 5)
 {
-    $Page = ceil($p3[0] / $p4);
+    $Page = ceil($P3[0] / $P4);
     if ($Page > 1)
     {
         echo '<div class="PageSelector">';
-        for ($i = ($p2 - 3); $i < ($Page + 1); $i++)
+        for ($i = ($P2 - 3); $i < ($Page + 1); $i++)
         {
-            if ($i > 0 and $i <= ($p2 + 3))
+            if ($i > 0 and $i <= ($P2 + 3))
             {
-                if ($p2 == $i) $Swch = 'SwchItemCur';
+                if ($P2 == $i) $Swch = 'SwchItemCur';
                 else $Swch = 'SwchItem';
-                echo '<a class="' . $Swch . '" href="' . $p1 . $i . '">' . $i . '</a>';
+                echo '<a class="' . $Swch . '" href="' . $P1 . $i . '">' . $i . '</a>';
             }
         }
         echo '</div>';
@@ -212,7 +234,7 @@ function PageSelector($p1, $p2, $p3, $p4 = 5)
 }
 
 
-function MiniIMG($p1, $p2, $p3, $p4, $p5 = 50)
+function MiniIMG($P1, $P2, $P3, $P4, $P5 = 50)
 {
     /*
     $p1 - path to picture.
@@ -221,11 +243,11 @@ function MiniIMG($p1, $p2, $p3, $p4, $p5 = 50)
     $p4 - hight.
     $p5 - quality.
     */
-    $Scr = imagecreatefromjpeg($p1);
-    $Size = getimagesize($p1);
-    $Tmp = imagecreatetruecolor($p3, $p4);
-    imagecopyresampled($Tmp, $Scr, 0, 0, 0, 0, $p3, $p4, $Size[0], $Size[1]);
-    imagejpeg($Tmp, $p2, $p5);
+    $Scr = imagecreatefromjpeg($P1);
+    $Size = getimagesize($P1);
+    $Tmp = imagecreatetruecolor($P3, $P4);
+    imagecopyresampled($Tmp, $Scr, 0, 0, 0, 0, $P3, $P4, $Size[0], $Size[1]);
+    imagejpeg($Tmp, $P2, $P5);
     imagedestroy($Scr);
     imagedestroy($Tmp);
 }
@@ -246,16 +268,19 @@ function AdminMenu()
 
 function Menu()
 {
-    if ($_SESSION['USER_LOGIN_IN'] != 1)
-        $Menu =
-            '<a href="/register"><div class="Menu">Registration</div></a>
-             <a href="/login"><div class="Menu">LogIn</div></a>';
-    else $Menu =
-        '<a href="/profile">
+        if (!isset($_SESSION['USER_LOGIN_IN'])) $_SESSION['USER_LOGIN_IN'] = 0;
+
+        if ($_SESSION['USER_LOGIN_IN'] != 1)
+            $Menu =
+                '<a href="/register"><div class="Menu">Registration</div></a>
+                <a href="/login"><div class="Menu">LogIn</div></a>';
+        else $Menu =
+            '<a href="/profile">
             <div class="Menu">
                 Profile
             </div>
         </a> ';
+
 
     echo '<div class="MenuHead">
                 <a href="/news">

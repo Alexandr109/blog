@@ -1,8 +1,9 @@
 <?php
-$pdo = new PDO($dsn, USER, PASS, $opt);
+global $Opt,$INFO1, $INFO2;
+$Pdo = new PDO($Dsn, USER, PASS, $Opt);
 
-$stmt = $pdo->query( 'SELECT `login`, `regdate`, `group` FROM `users` ORDER BY `regdate` DESC LIMIT 4');
-$Result =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+$Stmt = $Pdo->query( 'SELECT `login`, `regdate`, `group` FROM `users` ORDER BY `regdate` DESC LIMIT 4');
+$Result =  $Stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($Result as $row => $Row)
 {
@@ -13,8 +14,8 @@ foreach ($Result as $row => $Row)
 }
 
 
-$stmt = $pdo->query( 'SELECT `id`, `text`, `date` FROM `comments` ORDER BY `date` DESC LIMIT 4');
-$Result =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+$Stmt = $Pdo->query( 'SELECT `id`, `text`, `date` FROM `comments` ORDER BY `date` DESC LIMIT 4');
+$Result =  $Stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($Result as $row => $Row)
 {
